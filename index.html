@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PO Sinar Muda | Perjalanan Aman & Nyaman</title>
+    
+    <!-- Google Fonts: Bebas Neue for display, Manrope for clean body text -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Kanit:ital,wght@1,800&family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        /* TEMA WARNA DISESUAIKAN DENGAN LOGO RESMI (BIRU) */
+                        primary: '#0B192C',   // Deep Navy (Dipertahankan untuk kontras background elegan)
+                        secondary: '#2074AF', // Biru solid yang diekstrak dari teks Logo Sinar Muda
+                        accent: '#9BC9ED',    // Biru muda dari gradien background logo
+                        dark: '#0f172a',
+                        light: '#F4F9FC'      // Background halaman dibuat slightly ice blue (nyambung ke logo)
+                    },
+                    fontFamily: {
+                        display: ['Bebas Neue', 'sans-serif'], // Font besar yang berkarakter
+                        body: ['Manrope', 'sans-serif'],
+                        logo: ['Kanit', 'sans-serif'], // Font khusus menyesuaikan bentuk asli logo Sinar Muda
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body {
+            font-family: 'Manrope', sans-serif;
+            overflow-x: hidden;
+            background-color: #F8F9FA;
+        }
+
+        h1, h2, h3, .font-display {
+            font-family: 'Bebas Neue', sans-serif;
+            letter-spacing: 0.05em;
+        }
+
+        /* Organic Navbar Scroll */
+        .nav-scrolled {
+            background-color: rgba(10, 25, 47, 0.98);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding-top: 1rem;
+            padding-bottom: 1rem;
+        }
+
+        /* Custom Asymmetric Shadows */
+        .shadow-organic {
+            box-shadow: 20px 20px 60px rgba(0,0,0,0.05), -20px -20px 60px rgba(255,255,255,0.8);
+        }
+
+        .gsap-reveal { visibility: hidden; }
+
+        /* Marquee Animation */
+        .marquee-wrapper {
+            display: flex;
+            width: 200%;
+            animation: marquee 25s linear infinite;
+        }
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        /* Outline Text Effect */
+        .text-outline {
+            color: transparent;
+            -webkit-text-stroke: 1px rgba(255,255,255,0.3);
+        }
+
+        /* AI Chat Widget Styles */
+        #ai-chat-window {
+            transform-origin: bottom left;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0;
+            transform: scale(0.9) translateY(20px);
+            pointer-events: none;
+        }
+        #ai-chat-window.active {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+            pointer-events: auto;
+        }
+        .chat-message {
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .typing-indicator span {
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            background-color: currentColor;
+            border-radius: 50%;
+            animation: typing 1.4s infinite ease-in-out both;
+        }
+        .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
+        .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes typing {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body class="text-slate-800 selection:bg-secondary selection:text-white">
+
+    <!-- Navbar -->
+    <nav id="navbar" class="fixed w-full z-50 transition-all duration-500 py-6 px-6 md:px-12 text-white bg-transparent">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            
+            <!-- Logo Brand (GANTI URL GAMBAR DI SINI) -->
+            <a href="#" class="flex items-center gap-3 relative z-50 group">
+                <!-- Menggunakan logo.jpg asli yang diunggah -->
+                <img src="logo.jpg" alt="Logo Sinar Muda" class="h-12 md:h-14 w-auto aspect-square object-cover rounded-xl shadow-[0_0_15px_rgba(32,116,175,0.4)] border border-white/20 group-hover:scale-105 transition-transform duration-300">
+                
+                <!-- Teks nama di samping logo (disembunyikan di layar sangat kecil) -->
+                <div class="flex flex-col hidden sm:flex">
+                    <h1 class="font-logo italic font-extrabold text-2xl tracking-wide leading-none text-white" style="text-shadow: 2px 2px 0px rgba(32,116,175,0.8);">SINAR MUDA</h1>
+                    <span class="text-[9px] tracking-[0.3em] text-accent font-bold uppercase mt-1">Executive Class</span>
+                </div>
+            </a>
+            
+            <!-- Desktop Links -->
+            <div class="hidden lg:flex items-center gap-10 font-bold text-xs uppercase tracking-widest">
+                <a href="#beranda" class="hover:text-secondary transition-colors relative group">
+                    Beranda <span class="absolute -bottom-2 left-0 w-0 h-[2px] bg-secondary transition-all group-hover:w-full"></span>
+                </a>
+                <a href="#armada" class="hover:text-secondary transition-colors relative group">
+                    Koleksi Armada <span class="absolute -bottom-2 left-0 w-0 h-[2px] bg-secondary transition-all group-hover:w-full"></span>
+                </a>
+                <a href="#harga" class="hover:text-secondary transition-colors relative group">
+                    Harga Tiket <span class="absolute -bottom-2 left-0 w-0 h-[2px] bg-secondary transition-all group-hover:w-full"></span>
+                </a>
+                <a href="#agen" class="hover:text-secondary transition-colors relative group">
+                    Agen <span class="absolute -bottom-2 left-0 w-0 h-[2px] bg-secondary transition-all group-hover:w-full"></span>
+                </a>
+                
+                <!-- CTA Button -->
+                <a href="https://wa.me/628120000000" target="_blank" class="bg-white text-primary hover:bg-secondary hover:text-white px-8 py-3 rounded-full font-extrabold transition-all shadow-[0_0_20px_rgba(255,255,255,0.2)]">
+                    RESERVASI TIKET
+                </a>
+            </div>
+
+            <!-- Mobile Toggle -->
+            <button id="mobile-menu-btn" class="lg:hidden text-2xl z-50 relative text-white">
+                <i class="fa-solid fa-bars-staggered"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu Overlay -->
+    <div id="mobile-menu" class="fixed inset-0 bg-primary z-40 flex flex-col justify-center items-center text-white opacity-0 pointer-events-none transition-all duration-500">
+        <div class="flex flex-col space-y-8 text-center text-3xl font-display tracking-widest">
+            <a href="#beranda" class="mobile-link hover:text-secondary transition">Beranda</a>
+            <a href="#armada" class="mobile-link hover:text-secondary transition">Koleksi Armada</a>
+            <a href="#harga" class="mobile-link hover:text-secondary transition">Harga Tiket</a>
+            <a href="#agen" class="mobile-link hover:text-secondary transition">Kontak Agen</a>
+            <a href="https://wa.me/6281241527132" class="mobile-link mt-8 bg-secondary text-white px-10 py-4 text-xl rounded-full">Pesan Tiket</a>
+        </div>
+    </div>
+
+    <!-- 1. Hero Section (Asymmetric Modern) -->
+    <section id="beranda" class="relative w-full h-screen min-h-[700px] bg-primary overflow-hidden flex items-center">
+        <!-- Background Bus Image -->
+        <div class="absolute inset-0 w-full h-full object-cover opacity-30 mix-blend-luminosity bg-[url('SnapInsta.to_619134302_18168222067387660_4473514695027242911_n.jpg')] bg-cover bg-center"></div>
+        <div class="absolute inset-0 bg-gradient-to-r from-primary via-primary/90 to-transparent"></div>
+
+        <!-- Big Background Typography -->
+        <div class="absolute top-1/2 left-0 -translate-y-1/2 text-[15vw] font-display text-outline whitespace-nowrap pointer-events-none select-none opacity-50">
+            SINAR MUDA GLORIA
+        </div>
+
+        <div class="relative z-10 max-w-7xl mx-auto px-6 md:px-12 w-full flex flex-col md:flex-row items-center pt-20">
+            <div class="w-full md:w-3/5 text-white">
+                <div class="flex items-center gap-4 mb-6 gsap-reveal">
+                    <div class="w-12 h-[2px] bg-secondary"></div>
+                    <span class="text-secondary font-bold tracking-[0.2em] text-sm uppercase">Perjalanan Darat Premium</span>
+                </div>
+                
+                <h1 class="text-6xl md:text-8xl font-display leading-[0.9] mb-8 gsap-reveal">
+                    Menyusuri <br>
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400">Jalanan</span><br>
+                    Dengan Elegan.
+                </h1>
+                
+                <p class="text-slate-300 text-lg md:text-xl font-light max-w-md mb-10 leading-relaxed gsap-reveal">
+                    Bukan sekadar transportasi. Kami menghadirkan ruang peristirahatan eksklusif yang bergerak mengantarkan Anda menuju tujuan.
+                </p>
+
+                <div class="flex gap-4 gsap-reveal">
+                    <a href="#armada" class="bg-secondary text-white px-8 py-4 rounded-full font-bold text-sm tracking-widest uppercase hover:bg-red-700 transition-colors flex items-center gap-3">
+                        Lihat Armada <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Hero Decorative Element -->
+            <div class="hidden md:block w-2/5 relative gsap-reveal" data-x="50">
+                <div class="w-full aspect-[3/4] relative">
+                    <img src="Hero.jpg" class="w-full h-full object-cover rounded-[40px] shadow-2xl">
+                    <div class="absolute inset-0 border-4 border-white/20 rounded-[40px] m-4 pointer-events-none"></div>
+                    <!-- Badge -->
+                    <div class="absolute bottom-10 -left-10 bg-white text-primary p-6 rounded-3xl shadow-2xl flex items-center gap-4 z-20">
+                        <div class="text-5xl font-display text-secondary">20+</div>
+                        <div class="text-xs font-bold uppercase tracking-widest leading-relaxed">
+                            Fasilitas <br>Seat <br>Premium
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Marquee Brand Partners -->
+    <div class="bg-white py-6 border-b border-gray-100 overflow-hidden relative">
+        <div class="marquee-wrapper flex items-center text-2xl font-display tracking-widest text-slate-300">
+            <span>MERCEDES-BENZ OH 1626 S &nbsp; • &nbsp; TENTREM KAROSERI &nbsp; • &nbsp; VOLVO B8R 330HP &nbsp; • &nbsp; AVANTE H7 PRIORITY &nbsp; • &nbsp; AVANTE H8 &nbsp; • &nbsp; </span>
+            <span>MERCEDES-BENZ OH 1626 S &nbsp; • &nbsp; TENTREM KAROSERI &nbsp; • &nbsp; VOLVO B8R 330HP &nbsp; • &nbsp; AVANTE H7 PRIORITY &nbsp; • &nbsp; AVANTE H8 &nbsp; • &nbsp; </span>
+        </div>
+    </div>
+
+    <!-- 2. ARMADA SHOWCASE (Tampilan Asimetris Custom) -->
+    <section id="armada" class="py-32 bg-light relative">
+        <div class="max-w-7xl mx-auto px-6 md:px-12">
+            
+            <div class="mb-24 text-center max-w-2xl mx-auto gsap-reveal">
+                <h2 class="text-5xl md:text-6xl font-display text-primary mb-6">Koleksi Armada Eksklusif</h2>
+                <p class="text-slate-500 text-lg font-light leading-relaxed">Setiap bus di garasi kami memiliki karakter, desain, dan konfigurasi khusus untuk menjawab kebutuhan perjalanan jarak jauh Anda.</p>
+            </div>
+
+            <div class="space-y-32">
+                
+                <!-- BUS 1: GLORIA (Biru) -->
+                <div class="flex flex-col lg:flex-row items-center gap-16 group bus-item">
+                    <div class="w-full lg:w-1/2 relative gsap-reveal" data-x="-50">
+                        <!-- Decorative background block -->
+                        <div class="absolute inset-0 bg-[#168B98] translate-x-4 -translate-y-4 rounded-[2rem] -z-10 transition-transform duration-500 group-hover:translate-x-6 group-hover:-translate-y-6"></div>
+                        <img src="Gloria.jpg" alt="Bus Gloria" class="w-full h-[450px] object-cover rounded-[2rem] shadow-xl grayscale-[20%] group-hover:grayscale-0 transition-all duration-700">
+                        <!-- Color Tag -->
+                        <div class="absolute top-6 left-6 bg-white/95 backdrop-blur px-5 py-2 rounded-full flex items-center gap-3 shadow-lg">
+                            <span class="w-4 h-4 rounded-full bg-[#168B98] shadow-inner"></span>
+                            <span class="text-xs font-bold uppercase tracking-widest text-slate-800">Edisi Teal</span>
+                        </div>
+                    </div>
+                    <div class="w-full lg:w-1/2 gsap-reveal" data-x="50">
+                        <div class="text-secondary font-bold tracking-[0.2em] text-sm uppercase mb-2">Sinar Muda</div>
+                        <h3 class="text-5xl md:text-7xl font-display text-primary mb-6">GLORIA</h3>
+                        <p class="text-slate-600 mb-8 leading-relaxed text-lg">Hadir dengan balutan warna biru elegan, Gloria didesain untuk kenyamanan kelas atas dengan privasi tinggi.</p>
+                        
+                        <div class="space-y-4 mb-10">
+                            <div class="flex items-center gap-4 bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
+                                <div class="w-12 h-12 rounded-full bg-primary/5 flex items-center justify-center text-primary"><i class="fa-solid fa-bus"></i></div>
+                                <div><p class="text-xs text-slate-400 font-bold uppercase tracking-wider">Body Karoseri</p><p class="font-bold text-primary">Avante H7 Priority (Tentrem)</p></div>
+                            </div>
+                            <div class="flex items-center gap-4 bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
+                                <div class="w-12 h-12 rounded-full bg-primary/5 flex items-center justify-center text-primary"><i class="fa-solid fa-gears"></i></div>
+                                <div><p class="text-xs text-slate-400 font-bold uppercase tracking-wider">Chassis & Engine</p><p class="font-bold text-primary">Mercedes Benz OH 1626S</p></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BUS 2: YESAYA (Kuning) - Reverse Layout -->
+                <div class="flex flex-col lg:flex-row-reverse items-center gap-16 group bus-item">
+                    <div class="w-full lg:w-1/2 relative gsap-reveal" data-x="50">
+                        <div class="absolute inset-0 bg-[#FFB703] -translate-x-4 translate-y-4 rounded-[2rem] -z-10 transition-transform duration-500 group-hover:-translate-x-6 group-hover:translate-y-6"></div>
+                        <img src="Yesaya.jpg" alt="Bus Yesaya" class="w-full h-[450px] object-cover rounded-[2rem] shadow-xl grayscale-[20%] group-hover:grayscale-0 transition-all duration-700">
+                        <!-- Color Tag -->
+                        <div class="absolute top-6 right-6 lg:left-6 lg:right-auto bg-white/95 backdrop-blur px-5 py-2 rounded-full flex items-center gap-3 shadow-lg">
+                            <span class="w-4 h-4 rounded-full bg-[#FFB703] shadow-inner"></span>
+                            <span class="text-xs font-bold uppercase tracking-widest text-slate-800">Edisi Kuning</span>
+                        </div>
+                    </div>
+                    <div class="w-full lg:w-1/2 lg:text-right gsap-reveal" data-x="-50">
+                        <div class="text-secondary font-bold tracking-[0.2em] text-sm uppercase mb-2">Premium Series</div>
+                        <h3 class="text-5xl md:text-7xl font-display text-primary mb-6">YESAYA</h3>
+                        <p class="text-slate-600 mb-8 leading-relaxed text-lg lg:ml-auto">Bertenaga raksasa dan ramah lingkungan. Yesaya menggunakan mesin standar Euro 5 untuk perjalanan halus dan bertenaga.</p>
+                        
+                        <div class="space-y-4 mb-10 flex flex-col lg:items-end">
+                            <div class="flex items-center gap-4 bg-white p-4 rounded-2xl shadow-sm border border-slate-100 w-full lg:w-4/5 text-left lg:flex-row-reverse lg:text-right">
+                                <div class="w-12 h-12 rounded-full bg-primary/5 flex items-center justify-center text-primary"><i class="fa-solid fa-bus"></i></div>
+                                <div class="flex-1"><p class="text-xs text-slate-400 font-bold uppercase tracking-wider">Body Karoseri</p><p class="font-bold text-primary">All-New Avante Volvo B8R</p></div>
+                            </div>
+                            <div class="flex items-center gap-4 bg-white p-4 rounded-2xl shadow-sm border border-slate-100 w-full lg:w-4/5 text-left lg:flex-row-reverse lg:text-right">
+                                <div class="w-12 h-12 rounded-full bg-primary/5 flex items-center justify-center text-primary"><i class="fa-solid fa-gears"></i></div>
+                                <div class="flex-1"><p class="text-xs text-slate-400 font-bold uppercase tracking-wider">Chassis & Engine</p><p class="font-bold text-primary">Volvo B8R 330HP Euro 5</p></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BUS 3: SANTA MONIKA (Merah) -->
+                <div class="flex flex-col lg:flex-row items-center gap-16 group bus-item">
+                    <div class="w-full lg:w-1/2 relative gsap-reveal" data-x="-50">
+                        <div class="absolute inset-0 bg-[#D90429] translate-x-4 -translate-y-4 rounded-[2rem] -z-10 transition-transform duration-500 group-hover:translate-x-6 group-hover:-translate-y-6"></div>
+                        <img src="SantaMonika.jpg" alt="Bus Santa Monika" class="w-full h-[450px] object-cover rounded-[2rem] shadow-xl grayscale-[20%] group-hover:grayscale-0 transition-all duration-700">
+                        <div class="absolute top-6 left-6 bg-white/95 backdrop-blur px-5 py-2 rounded-full flex items-center gap-3 shadow-lg">
+                            <span class="w-4 h-4 rounded-full bg-[#D90429] shadow-inner"></span>
+                            <span class="text-xs font-bold uppercase tracking-widest text-slate-800">Edisi Merah</span>
+                        </div>
+                    </div>
+                    <div class="w-full lg:w-1/2 gsap-reveal" data-x="50">
+                        <h3 class="text-5xl md:text-7xl font-display text-primary mb-6">SANTA MONIKA</h3>
+                        <p class="text-slate-600 mb-8 leading-relaxed text-lg">Keberanian warna merah berpadu dengan suspensi udara yang meredam guncangan sekecil apapun di jalan.</p>
+                        
+                        <div class="space-y-4 mb-10">
+                            <div class="flex items-center gap-4 bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
+                                <div class="w-12 h-12 rounded-full bg-primary/5 flex items-center justify-center text-primary"><i class="fa-brands fa-instagram"></i></div>
+                                <div><p class="text-xs text-slate-400 font-bold uppercase tracking-wider">Body by Tentrem</p><p class="font-bold text-primary">Avante H9 <span class="text-secondary text-sm">@tentrembusofficial</span></p></div>
+                            </div>
+                            <div class="flex items-center gap-4 bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
+                                <div class="w-12 h-12 rounded-full bg-primary/5 flex items-center justify-center text-primary"><i class="fa-solid fa-wind"></i></div>
+                                <div><p class="text-xs text-slate-400 font-bold uppercase tracking-wider">Suspension & Engine</p><p class="font-bold text-primary">Mercedes Benz OH 1526 Air Suspension</p></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BUS 4: SANTO RAFAEL (Biru Muda) - Reverse Layout -->
+                <div class="flex flex-col lg:flex-row-reverse items-center gap-16 group bus-item">
+                    <div class="w-full lg:w-1/2 relative gsap-reveal" data-x="50">
+                        <div class="absolute inset-0 bg-[#00B4D8] -translate-x-4 translate-y-4 rounded-[2rem] -z-10 transition-transform duration-500 group-hover:-translate-x-6 group-hover:translate-y-6"></div>
+                        <img src="SantaRafael.jpg" alt="Bus Santo Rafael" class="w-full h-[450px] object-cover rounded-[2rem] shadow-xl grayscale-[20%] group-hover:grayscale-0 transition-all duration-700">
+                        <div class="absolute top-6 right-6 lg:left-6 lg:right-auto bg-white/95 backdrop-blur px-5 py-2 rounded-full flex items-center gap-3 shadow-lg">
+                            <span class="w-4 h-4 rounded-full bg-[#00B4D8] shadow-inner"></span>
+                            <span class="text-xs font-bold uppercase tracking-widest text-slate-800">Edisi Biru Muda</span>
+                        </div>
+                    </div>
+                    <div class="w-full lg:w-1/2 lg:text-right gsap-reveal" data-x="-50">
+                        <h3 class="text-5xl md:text-7xl font-display text-primary mb-6">SANTO RAFAEL</h3>
+                        <p class="text-slate-600 mb-8 leading-relaxed text-lg lg:ml-auto">Menawarkan fleksibilitas luar biasa dengan konfigurasi 20 kursi premium yang memadukan kabin Sleeper dan Executive dalam satu atap.</p>
+                        
+                        <div class="grid grid-cols-3 gap-4 mb-6 text-center">
+                            <div class="bg-primary/5 p-4 rounded-xl border border-primary/10">
+                                <div class="font-display text-3xl text-primary">2</div>
+                                <div class="text-[10px] uppercase font-bold text-slate-500">Sleeper (1-1)</div>
+                            </div>
+                            <div class="bg-primary/5 p-4 rounded-xl border border-primary/10">
+                                <div class="font-display text-3xl text-primary">6</div>
+                                <div class="text-[10px] uppercase font-bold text-slate-500">Exec (2-1)</div>
+                            </div>
+                            <div class="bg-primary/5 p-4 rounded-xl border border-primary/10">
+                                <div class="font-display text-3xl text-primary">12</div>
+                                <div class="text-[10px] uppercase font-bold text-slate-500">Exec (1-1-1)</div>
+                            </div>
+                        </div>
+
+                        <div class="space-y-4 mb-10 flex flex-col lg:items-end">
+                            <div class="flex items-center gap-4 bg-white p-4 rounded-2xl shadow-sm border border-slate-100 w-full lg:w-4/5 text-left lg:flex-row-reverse lg:text-right">
+                                <div class="w-12 h-12 rounded-full bg-primary/5 flex items-center justify-center text-primary"><i class="fa-solid fa-layer-group"></i></div>
+                                <div class="flex-1"><p class="text-xs text-slate-400 font-bold uppercase tracking-wider">Specs</p><p class="font-bold text-primary">Avante H8 • MB OH 1626 S Euro 4</p></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BUS 5: KEMURAHANMU (Putih Oranye) -->
+                <div class="flex flex-col lg:flex-row items-center gap-16 group bus-item">
+                    <div class="w-full lg:w-1/2 relative gsap-reveal" data-x="-50">
+                        <div class="absolute inset-0 bg-[#F4A261] translate-x-4 -translate-y-4 rounded-[2rem] -z-10 transition-transform duration-500 group-hover:translate-x-6 group-hover:-translate-y-6"></div>
+                        <img src="Kemurahanmu.jpg" alt="Bus Kemurahanmu" class="w-full h-[450px] object-cover rounded-[2rem] shadow-xl grayscale-[20%] group-hover:grayscale-0 transition-all duration-700">
+                        <div class="absolute top-6 left-6 bg-white/95 backdrop-blur px-5 py-2 rounded-full flex items-center gap-3 shadow-lg">
+                            <span class="w-4 h-4 rounded-full bg-gradient-to-r from-white to-[#F4A261] shadow-inner border border-gray-200"></span>
+                            <span class="text-xs font-bold uppercase tracking-widest text-slate-800">Putih Oranye</span>
+                        </div>
+                    </div>
+                    <div class="w-full lg:w-1/2 gsap-reveal" data-x="50">
+                        <h3 class="text-5xl md:text-7xl font-display text-primary mb-4">KEMURAHANMU</h3>
+                        <p class="text-secondary tracking-[0.2em] uppercase font-bold text-sm mb-6">Mercedes-Benz OH 1626 S</p>
+                        
+                        <div class="border-l-4 border-secondary pl-6 space-y-4 text-slate-600">
+                            <p class="leading-relaxed">
+                                Didesain dengan ruang kabin yang cukup luas, memberikan kenyamanan mutlak bagi penumpang terutama pada perjalanan jauh. Dilengkapi kursi yang dapat direbahkan, pendingin udara (AC) maksimal, dan sistem hiburan canggih.
+                            </p>
+                            <p class="leading-relaxed">
+                                Fitur keselamatan tinggi menjadi prioritas, menggunakan sistem pengereman efisien dan struktur bodi yang kuat untuk perlindungan ganda selama di perjalanan.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- NEW: DAFTAR HARGA TIKET -->
+    <section id="harga" class="py-24 bg-white relative">
+        <div class="max-w-7xl mx-auto px-6 md:px-12">
+            <div class="text-center mb-16 gsap-reveal" data-y="30">
+                <span class="text-secondary font-bold tracking-widest uppercase mb-2 text-sm block">Pilihan Terbaik</span>
+                <h2 class="text-4xl md:text-5xl font-display text-primary">Daftar Harga Tiket</h2>
+                <p class="text-slate-500 mt-4 max-w-xl mx-auto">Informasi tarif perjalanan PO Sinar Muda. Harga dapat berubah sewaktu-waktu sesuai kebijakan manajemen.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                
+                <!-- Harga: Sleeper Seat -->
+                <div class="bg-primary text-white rounded-3xl p-8 shadow-2xl relative overflow-hidden gsap-reveal border-t-8 border-secondary" data-y="30">
+                    <div class="absolute -right-6 -top-6 text-9xl text-white/5"><i class="fa-solid fa-bed"></i></div>
+                    <h3 class="font-display text-3xl mb-1 relative z-10">SLEEPER SEAT</h3>
+                    <div class="w-12 h-1 bg-secondary mb-6 relative z-10"></div>
+                    
+                    <ul class="space-y-4 relative z-10 text-sm">
+                        <li class="flex justify-between items-center border-b border-white/10 pb-3">
+                            <span>Mks ⇄ Sorowako</span>
+                            <span class="font-bold text-accent">300k / 340k</span>
+                        </li>
+                        <li class="flex justify-between items-center border-b border-white/10 pb-3">
+                            <span>Mks ⇄ Malili</span>
+                            <span class="font-bold text-accent">270k / 300k</span>
+                        </li>
+                        <li class="flex justify-between items-center border-b border-white/10 pb-3">
+                            <span>Mks ⇄ Toraja</span>
+                            <span class="font-bold text-accent">200k / 230k</span>
+                        </li>
+                        <li class="flex justify-between items-center pb-2">
+                            <span>Mks ⇄ Masamba</span>
+                            <span class="font-bold text-accent">230k</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Harga: Big Top -->
+                <div class="bg-light text-primary rounded-3xl p-8 shadow-xl relative overflow-hidden border border-slate-200 gsap-reveal" data-y="30" data-delay="0.1">
+                    <div class="absolute -right-6 -top-6 text-9xl text-primary/5"><i class="fa-solid fa-couch"></i></div>
+                    <h3 class="font-display text-3xl mb-1 relative z-10">BIG TOP</h3>
+                    <div class="w-12 h-1 bg-secondary mb-6 relative z-10"></div>
+                    
+                    <ul class="space-y-4 relative z-10 text-sm font-medium">
+                        <li class="flex justify-between items-center border-b border-slate-200 pb-3">
+                            <span>Mks ⇄ Sorowako</span>
+                            <span class="font-bold text-secondary text-lg">300k</span>
+                        </li>
+                        <li class="flex justify-between items-center pb-2">
+                            <span>Mks ⇄ Malili</span>
+                            <span class="font-bold text-secondary text-lg">265k</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Harga: Grand Captain -->
+                <div class="bg-light text-primary rounded-3xl p-8 shadow-xl relative overflow-hidden border border-slate-200 gsap-reveal" data-y="30" data-delay="0.2">
+                    <div class="absolute -right-6 -top-6 text-9xl text-primary/5"><i class="fa-solid fa-crown"></i></div>
+                    <h3 class="font-display text-3xl mb-1 relative z-10">GRAND CAPTAIN</h3>
+                    <div class="w-12 h-1 bg-secondary mb-6 relative z-10"></div>
+                    
+                    <ul class="space-y-4 relative z-10 text-sm font-medium">
+                        <li class="flex justify-between items-center pb-2">
+                            <span>Seat 1A - 2A</span>
+                            <span class="font-bold text-secondary text-lg">230k</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Harga: Business Class -->
+                <div class="bg-light text-primary rounded-3xl p-8 shadow-xl relative overflow-hidden border border-slate-200 gsap-reveal" data-y="30" data-delay="0.3">
+                    <div class="absolute -right-6 -top-6 text-9xl text-primary/5"><i class="fa-solid fa-briefcase"></i></div>
+                    <h3 class="font-display text-3xl mb-1 relative z-10">BUSINESS CLASS</h3>
+                    <div class="w-12 h-1 bg-secondary mb-6 relative z-10"></div>
+                    
+                    <ul class="space-y-4 relative z-10 text-sm font-medium">
+                        <li class="flex justify-between items-center pb-2">
+                            <span>Mks ⇄ Toraja</span>
+                            <span class="font-bold text-secondary text-lg">200k</span>
+                        </li>
+                        <li class="flex justify-between items-center pb-2 border-t border-slate-200 pt-3">
+                            <span>Grand Captain Bus</span>
+                            <span class="font-bold text-secondary text-lg">200k</span>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- NEW: KONTAK AGEN PERWAKILAN -->
+    <section id="agen" class="py-24 bg-primary text-white relative border-t border-white/10">
+        <!-- Abstract Pattern -->
+        <div class="absolute inset-0 opacity-5 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
+
+        <div class="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
+            <div class="flex flex-col md:flex-row justify-between items-end mb-16 gsap-reveal" data-y="30">
+                <div>
+                    <h2 class="text-4xl md:text-5xl font-display text-white mb-2">Informasi Kontak <span class="text-secondary">Perwakilan</span></h2>
+                    <p class="text-slate-400">Hubungi agen terdekat kami untuk pemesanan tiket dan pengiriman paket.</p>
+                </div>
+                <div class="mt-6 md:mt-0">
+                    <a href="https://wa.me/6281241527132" target="_blank" class="bg-secondary text-white px-6 py-3 rounded-full font-bold text-sm hover:bg-white hover:text-primary transition-colors flex items-center gap-2">
+                        <i class="fa-brands fa-whatsapp text-lg"></i> Chat CS Pusat
+                    </a>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                <!-- Makassar -->
+                <div class="bg-white/5 border border-white/10 p-5 rounded-2xl hover:bg-white/10 transition-colors gsap-reveal group">
+                    <h4 class="font-bold text-lg mb-3 flex items-center gap-2"><i class="fa-solid fa-location-dot text-secondary"></i> Makassar</h4>
+                    <div class="space-y-2 text-sm text-slate-300">
+                        <a href="https://wa.me/6281241527132" class="flex items-center gap-2 hover:text-accent transition-colors"><i class="fa-solid fa-phone text-xs opacity-50"></i> 0812 4152 7132</a>
+                        <a href="https://wa.me/62811417132" class="flex items-center gap-2 hover:text-accent transition-colors"><i class="fa-solid fa-phone text-xs opacity-50"></i> 0811 4171 32</a>
+                    </div>
+                </div>
+
+                <!-- Rantepao & Makale -->
+                <div class="bg-white/5 border border-white/10 p-5 rounded-2xl hover:bg-white/10 transition-colors gsap-reveal group">
+                    <h4 class="font-bold text-lg mb-3 flex items-center gap-2"><i class="fa-solid fa-location-dot text-secondary"></i> Toraja</h4>
+                    <div class="space-y-2 text-sm text-slate-300">
+                        <a href="https://wa.me/6281241526706" class="flex justify-between items-center hover:text-accent transition-colors">
+                            <span><i class="fa-solid fa-phone text-xs opacity-50 mr-1"></i> Rantepao</span> <span class="font-mono">0812 4152 6706</span>
+                        </a>
+                        <a href="https://wa.me/6285255513033" class="flex justify-between items-center hover:text-accent transition-colors">
+                            <span><i class="fa-solid fa-phone text-xs opacity-50 mr-1"></i> Makale</span> <span class="font-mono">0852 5551 3033</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Malili & Sorowako -->
+                <div class="bg-white/5 border border-white/10 p-5 rounded-2xl hover:bg-white/10 transition-colors gsap-reveal group">
+                    <h4 class="font-bold text-lg mb-3 flex items-center gap-2"><i class="fa-solid fa-location-dot text-secondary"></i> Luwu Timur</h4>
+                    <div class="space-y-2 text-sm text-slate-300">
+                        <a href="https://wa.me/6281241527123" class="flex justify-between items-center hover:text-accent transition-colors">
+                            <span><i class="fa-solid fa-phone text-xs opacity-50 mr-1"></i> Malili</span> <span class="font-mono">0812 4152 7123</span>
+                        </a>
+                        <a href="https://wa.me/6282196734188" class="flex justify-between items-center hover:text-accent transition-colors">
+                            <span><i class="fa-solid fa-phone text-xs opacity-50 mr-1"></i> Sorowako 1</span> <span class="font-mono">0821 9673 4188</span>
+                        </a>
+                        <a href="https://wa.me/62811458551" class="flex justify-between items-center hover:text-accent transition-colors">
+                            <span><i class="fa-solid fa-phone text-xs opacity-50 mr-1"></i> Sorowako 2</span> <span class="font-mono">0811 4585 51</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Masamba & Wawondula -->
+                <div class="bg-white/5 border border-white/10 p-5 rounded-2xl hover:bg-white/10 transition-colors gsap-reveal group">
+                    <h4 class="font-bold text-lg mb-3 flex items-center gap-2"><i class="fa-solid fa-location-dot text-secondary"></i> Lainnya</h4>
+                    <div class="space-y-2 text-sm text-slate-300">
+                        <a href="https://wa.me/6282317588758" class="flex justify-between items-center hover:text-accent transition-colors">
+                            <span><i class="fa-solid fa-phone text-xs opacity-50 mr-1"></i> Masamba</span> <span class="font-mono">0823 1758 8758</span>
+                        </a>
+                        <a href="https://wa.me/6281341747609" class="flex justify-between items-center hover:text-accent transition-colors">
+                            <span><i class="fa-solid fa-phone text-xs opacity-50 mr-1"></i> Wawondula</span> <span class="font-mono">0813 4174 7609</span>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. Footer / CTA -->
+    <footer class="bg-primary text-white pt-24 pb-12 border-t-8 border-secondary relative overflow-hidden">
+        <!-- Abstract Background Shape -->
+        <div class="absolute top-0 right-0 w-[600px] h-[600px] bg-white/5 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/3"></div>
+
+        <div class="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 mb-20 items-center">
+                <!-- Branding -->
+                <div>
+                    <h1 class="text-6xl font-logo italic font-extrabold tracking-wide leading-none mb-4 text-white" style="text-shadow: 3px 3px 0px rgba(32,116,175,0.8);">SINAR MUDA</h1>
+                    <p class="text-slate-400 font-light text-lg leading-relaxed max-w-md mb-8">
+                        Mendefinisikan ulang standar perjalanan darat AKAP. Armada eksklusif, fasilitas tanpa kompromi.
+                    </p>
+                    <div class="flex gap-4">
+                        <a href="https://www.instagram.com/po_sinarmuda.id" target="_blank" class="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center hover:bg-secondary hover:border-secondary transition-all">
+                            <i class="fa-brands fa-instagram text-xl"></i>
+                        </a>
+                        <a href="#" class="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center hover:bg-secondary hover:border-secondary transition-all">
+                            <i class="fa-brands fa-tiktok text-xl"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Contact & Booking -->
+                <div class="bg-white/5 border border-white/10 p-8 md:p-10 rounded-[2rem] backdrop-blur-sm shadow-2xl">
+                    <h4 class="font-display text-3xl mb-2">Mulai Perjalanan Anda</h4>
+                    <p class="text-slate-400 text-sm mb-8 font-light">Reservasi tiket mudah dan cepat melalui layanan agen resmi kami.</p>
+                    
+                    <ul class="space-y-6 mb-8 text-sm">
+                        <li class="flex items-start gap-4">
+                            <div class="w-10 h-10 rounded-full bg-secondary/20 text-secondary flex items-center justify-center shrink-0"><i class="fa-solid fa-location-dot"></i></div>
+                            <span class="text-slate-300 mt-2">Makassar, Sulawesi Selatan</span>
+                        </li>
+                        <li class="flex items-center gap-4">
+                            <div class="w-10 h-10 rounded-full bg-secondary/20 text-secondary flex items-center justify-center shrink-0"><i class="fa-solid fa-phone"></i></div>
+                            <span class="text-slate-300 font-bold tracking-widest">0812-4152-7132</span>
+                        </li>
+                    </ul>
+
+                    <a href="https://wa.me/6281241527132" target="_blank" class="w-full bg-secondary text-white py-4 rounded-xl font-bold flex items-center justify-center gap-3 hover:bg-white hover:text-primary transition-all transform hover:-translate-y-1 shadow-lg">
+                        <i class="fa-brands fa-whatsapp text-2xl"></i> HUBUNGI AGEN WA
+                    </a>
+                </div>
+            </div>
+
+            <div class="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-slate-500 font-bold uppercase tracking-widest">
+                <p>&copy; 2024 PO SINAR MUDA. ALL RIGHTS RESERVED.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ✨ AI Chat Widget -->
+    <div class="fixed bottom-6 left-6 z-50 flex flex-col items-start">
+        <!-- Chat Window -->
+        <div id="ai-chat-window" class="bg-white w-[350px] max-w-[calc(100vw-3rem)] h-[450px] rounded-2xl shadow-2xl border border-slate-200 flex flex-col mb-4 overflow-hidden">
+            <!-- Header -->
+            <div class="bg-primary text-white p-4 flex justify-between items-center shrink-0">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-full bg-secondary flex items-center justify-center text-sm">✨</div>
+                    <div>
+                        <h4 class="font-display tracking-widest leading-none text-lg">Asisten AI</h4>
+                        <p class="text-[10px] text-accent uppercase tracking-wider font-bold">Powered by Gemini</p>
+                    </div>
+                </div>
+                <button id="close-chat-btn" class="text-white/70 hover:text-white transition-colors">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+            
+            <!-- Messages Area -->
+            <div id="chat-messages" class="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50 flex flex-col text-sm">
+                <!-- Initial Bot Message -->
+                <div class="flex gap-3 max-w-[85%] chat-message">
+                    <div class="w-6 h-6 rounded-full bg-secondary shrink-0 flex items-center justify-center text-white text-[10px]">✨</div>
+                    <div class="bg-white border border-slate-200 text-slate-700 p-3 rounded-2xl rounded-tl-none shadow-sm leading-relaxed">
+                        Halo! Saya adalah Asisten AI dari PO Sinar Muda. Ada yang bisa saya bantu mengenai info armada, rute, atau fasilitas kami hari ini?
+                    </div>
+                </div>
+            </div>
+
+            <!-- Input Area -->
+            <div class="p-3 bg-white border-t border-slate-100 shrink-0">
+                <form id="chat-form" class="flex items-center gap-2">
+                    <input type="text" id="chat-input" placeholder="Tanya sesuatu..." class="flex-1 bg-slate-100 text-slate-800 rounded-full px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-secondary/50 transition-all" autocomplete="off">
+                    <button type="submit" class="w-10 h-10 rounded-full bg-secondary text-white flex items-center justify-center hover:bg-primary transition-colors shrink-0">
+                        <i class="fa-solid fa-paper-plane text-sm -ml-1"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Toggle Button -->
+        <button id="toggle-chat-btn" class="bg-primary text-white px-5 py-3 rounded-full shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all flex items-center gap-2 font-bold text-sm tracking-wider uppercase border-2 border-secondary/30">
+            <span class="text-secondary text-lg">✨</span> Tanya AI
+        </button>
+    </div>
+
+    <!-- GSAP Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <script>
+        gsap.registerPlugin(ScrollTrigger);
+
+        // --- Navbar Organic Blur Effect ---
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 80) {
+                navbar.classList.add('nav-scrolled');
+                navbar.classList.remove('py-6');
+                navbar.classList.add('py-4');
+            } else {
+                navbar.classList.remove('nav-scrolled');
+                navbar.classList.add('py-6');
+                navbar.classList.remove('py-4');
+            }
+        });
+
+        // --- Mobile Menu Custom ---
+        const btn = document.getElementById('mobile-menu-btn');
+        const menu = document.getElementById('mobile-menu');
+        const links = document.querySelectorAll('.mobile-link');
+        let isOpen = false;
+
+        function toggle() {
+            isOpen = !isOpen;
+            if (isOpen) {
+                menu.style.opacity = '1';
+                menu.style.pointerEvents = 'auto';
+                btn.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+                gsap.fromTo(links, {y: 30, opacity: 0}, {y: 0, opacity: 1, duration: 0.5, stagger: 0.1, delay: 0.2});
+            } else {
+                menu.style.opacity = '0';
+                menu.style.pointerEvents = 'none';
+                btn.innerHTML = '<i class="fa-solid fa-bars-staggered"></i>';
+            }
+        }
+        btn.addEventListener('click', toggle);
+        links.forEach(l => l.addEventListener('click', toggle));
+
+        // --- Scroll Reveal Asymmetric ---
+        const reveals = document.querySelectorAll('.gsap-reveal');
+        
+        reveals.forEach((elem) => {
+            let y = elem.getAttribute('data-y') ? parseInt(elem.getAttribute('data-y')) : 30;
+            let x = elem.getAttribute('data-x') ? parseInt(elem.getAttribute('data-x')) : 0;
+            
+            // Special handling for the large typography overlap to feel organic
+            gsap.fromTo(elem, 
+                { y: y, x: x, autoAlpha: 0 }, 
+                {
+                    y: 0, x: 0, autoAlpha: 1, 
+                    duration: 1.2, 
+                    ease: "power4.out",
+                    scrollTrigger: {
+                        trigger: elem,
+                        start: "top 85%", 
+                        toggleActions: "play none none reverse"
+                    }
+                }
+            );
+        });
+
+        // Parallax subtle for background hero
+        gsap.to("#beranda", {
+            backgroundPosition: "50% 100%",
+            ease: "none",
+            scrollTrigger: {
+                trigger: "#beranda",
+                start: "top top",
+                end: "bottom top",
+                scrub: true
+            }
+        });
+
+        // --- Gemini API AI Chat Logic ---
+        const chatWindow = document.getElementById('ai-chat-window');
+        const toggleChatBtn = document.getElementById('toggle-chat-btn');
+        const closeChatBtn = document.getElementById('close-chat-btn');
+        const chatForm = document.getElementById('chat-form');
+        const chatInput = document.getElementById('chat-input');
+        const chatMessages = document.getElementById('chat-messages');
+
+        // Toggle Chat Window
+        const toggleChat = () => chatWindow.classList.toggle('active');
+        toggleChatBtn.addEventListener('click', toggleChat);
+        closeChatBtn.addEventListener('click', () => chatWindow.classList.remove('active'));
+
+        // Gemini API Config
+        const apiKey = ""; // API Key provided by execution environment
+        const model = "gemini-2.5-flash-preview-09-2025";
+        
+        // System Prompt to give context to the AI (UPDATED WITH PRICE LIST AND CONTACTS)
+        const systemInstruction = `Anda adalah Asisten Virtual resmi dari PO Sinar Muda, perusahaan otobus premium di Indonesia. 
+        Tugas Anda adalah membantu pelanggan dengan ramah, profesional, dan informatif. 
+        Sinar Muda memiliki armada bus seperti Gloria, Yesaya, Santa Monika, dan Santo Rafael. 
+        Fasilitas termasuk Sleeper Seat, Full AC, Snack, dan Toilet. 
+
+        Berikut adalah pedoman Harga Tiket terbaru untuk menjawab pertanyaan pelanggan:
+        - Kelas SLEEPER SEAT: Makassar ⇄ Sorowako (300k/340k), Makassar ⇄ Malili (270k/300k), Makassar ⇄ Toraja (200k/230k), Makassar ⇄ Masamba (230k).
+        - Kelas BIG TOP: Makassar ⇄ Sorowako (300k), Makassar ⇄ Malili (265k).
+        - Kelas GRAND CAPTAIN: Seat 1A - 2A (230k), Business Class (200k).
+        - Kelas BUSINESS CLASS: Makassar ⇄ Toraja (200k).
+        
+        Berikut adalah Kontak Agen Resmi PO Sinar Muda:
+        - Makassar: 0812 4152 7132 / 0811 4171 32
+        - Rantepao: 0812 4152 6706
+        - Makale: 0852 5551 3033
+        - Malili: 0812 4152 7123
+        - Masamba: 0823 1758 8758
+        - Wawondula: 0813 4174 7609
+        - Sorowako: 0821 9673 4188 / 0811 4585 51
+
+        Berikan jawaban yang ramah, sopan, gunakan format poin jika perlu, dan gunakan emoji. Jika pelanggan bertanya nomor WA, berikan dari daftar di atas. Jika mereka ingin pesan tiket, arahkan ke nomor WA Makassar atau agen terdekat tujuan mereka.`;
+
+        // Exponential Backoff Fetch
+        async function fetchWithRetry(url, options, maxRetries = 5) {
+            let delay = 1000;
+            for (let i = 0; i < maxRetries; i++) {
+                try {
+                    const response = await fetch(url, options);
+                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                    return await response.json();
+                } catch (error) {
+                    if (i === maxRetries - 1) throw error;
+                    await new Promise(res => setTimeout(res, delay));
+                    delay *= 2; // Double the delay
+                }
+            }
+        }
+
+        // Add message to UI
+        function appendMessage(text, isUser = false) {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `flex gap-3 max-w-[85%] chat-message ${isUser ? 'ml-auto flex-row-reverse' : ''}`;
+            
+            const avatar = isUser 
+                ? `<div class="w-6 h-6 rounded-full bg-slate-800 shrink-0 flex items-center justify-center text-white text-[10px]"><i class="fa-solid fa-user"></i></div>`
+                : `<div class="w-6 h-6 rounded-full bg-secondary shrink-0 flex items-center justify-center text-white text-[10px]">✨</div>`;
+            
+            const bubbleStyle = isUser 
+                ? 'bg-primary text-white border border-primary rounded-2xl rounded-tr-none shadow-sm' 
+                : 'bg-white border border-slate-200 text-slate-700 rounded-2xl rounded-tl-none shadow-sm';
+
+            msgDiv.innerHTML = `
+                ${avatar}
+                <div class="p-3 leading-relaxed text-[13px] ${bubbleStyle}">
+                    ${text}
+                </div>
+            `;
+            chatMessages.appendChild(msgDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Add loading indicator
+        function addLoadingIndicator() {
+            const loadingDiv = document.createElement('div');
+            loadingDiv.id = 'ai-typing';
+            loadingDiv.className = `flex gap-3 max-w-[85%] chat-message`;
+            loadingDiv.innerHTML = `
+                <div class="w-6 h-6 rounded-full bg-secondary shrink-0 flex items-center justify-center text-white text-[10px]">✨</div>
+                <div class="bg-white border border-slate-200 text-secondary p-3 rounded-2xl rounded-tl-none shadow-sm flex items-center gap-1 typing-indicator">
+                    <span></span><span></span><span></span>
+                </div>
+            `;
+            chatMessages.appendChild(loadingDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function removeLoadingIndicator() {
+            const loadingDiv = document.getElementById('ai-typing');
+            if (loadingDiv) loadingDiv.remove();
+        }
+
+        // Handle Form Submission
+        chatForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const userText = chatInput.value.trim();
+            if (!userText) return;
+
+            // 1. Show user message
+            appendMessage(userText, true);
+            chatInput.value = '';
+            chatInput.disabled = true;
+
+            // 2. Show loading
+            addLoadingIndicator();
+
+            // 3. Call Gemini API
+            try {
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+                const payload = {
+                    contents: [{ parts: [{ text: userText }] }],
+                    systemInstruction: { parts: [{ text: systemInstruction }] }
+                };
+
+                const data = await fetchWithRetry(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                removeLoadingIndicator();
+                
+                if (data.candidates && data.candidates[0].content) {
+                    const aiResponse = data.candidates[0].content.parts[0].text;
+                    // simple markdown formatting (bold to HTML)
+                    const formattedResponse = aiResponse.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
+                    appendMessage(formattedResponse, false);
+                } else {
+                    throw new Error("Invalid response format");
+                }
+
+            } catch (error) {
+                removeLoadingIndicator();
+                appendMessage("Maaf, sistem AI sedang sibuk. Silakan coba beberapa saat lagi.", false);
+                console.error("Gemini API Error:", error);
+            } finally {
+                chatInput.disabled = false;
+                chatInput.focus();
+            }
+        });
+
+    </script>
+</body>
+</html>
